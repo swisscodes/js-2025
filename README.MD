@@ -1,52 +1,127 @@
-# Javascript The Definative Guide 5th Edition
+# Javascript The Definative Guide 7th Edition
 
 *******************************************************************************************************
 
 ## object property access
 
 // Conditionally access properties with ?. (ES2020):
- book.contents?.ch01?.sect1 // => undefined: book.contents has no ch01 property
+book.contents?.ch01?.sect1 // => undefined: book.contents has no ch01 property
 
- // Access the properties of an object with . or []:
- book.topic
+optional chaining
+let a = { b: null };
+a.b?.c.d   // => undefined
+
+property access with ?. is “short-circuiting”: if the subexpression to
+the left of ?. evaluates to null or undefined, then the entire expression immediately
+evaluates to undefined without any further property access attempts.
+
+Of course, if a.b is an object, and if that object has no property named c, then
+a.b?.c.d will again throw a TypeError, and we will want to use another conditional
+property access:
+let a = { b: {} };
+a.b?.c?.d  // => undefined
+
+all this also applies to array
+a?.[index++]
+
+also used to call functions
+
+this is another form of short-circuiting
+
+```js
+let o = {x: 1};
+let p = null;
+o && o.x // => 1: o is truthy, so return value of o.x
+p && p.x     // => null: p is falsy, so return it and don't evaluate p.x
+
+
+// If maxWidth is truthy, use that. Otherwise, look for a value in
+// the preferences object. If that is not truthy, use a hardcoded constant.
+let max = maxWidth || preferences.maxWidth || 500; // not used mostly anymore there is alternative which is ??
+
+
+```
+
+```js
+ function square(x, log) { // The second argument is an optional function
+ log?.(x);            // Call the function if there is one
+ return x * x;         // Return the square of the argument
+ }
+```
+
+## The Conditional Operator (?:) sometimes actually called the ternary operator
+
+x > 0 ? x : -x     // The absolute value of x
+greeting = "hello " + (username ? username : "there");
+
+## First-Defined (??)
+
+The first-defined operator ?? evaluates to its first defined operand: if its left operand
+is not null and not undefined, it returns that value. Otherwise, it returns the value of
+the right operand. Like the && and || operators, ?? is short-circuiting: it only evalu
+ates its second operand if the first operand evaluates to null or undefined. If the
+expression a has no side effects, then the expression a ?? b is equivalent to:
+
+```js
+(a !== null && a !== undefined) ? a : b
+```
+
+## the “nullish coalescing” operator
+
+?? is a useful alternative to || (§4.10.2) when you want to select the first defined
+operand rather than the first truthy operand. Although || is nominally a logical OR
+operator, it is also used idiomatically to select the first non-falsy operand with code
+like this:
+// If maxWidth is truthy, use that. Otherwise, look for a value in
+// the preferences object. If that is not truthy, use a hardcoded constant.
+
+```js
+let max = maxWidth || preferences.maxWidth || 500;
+```
+
+// Access the properties of an object with . or []:
+book.topic
 book["edition"]
 // => "JavaScript"
- // => 7: another way to access property values.
- book.author = "Flanagan";  // Create new properties by assignment.
- book.contents = {};
+// => 7: another way to access property values.
+book.author = "Flanagan";  // Create new properties by assignment.
+book.contents = {};
 // {} is an empty object with no properties.
 ########################################################################################################
 
 *******************************************************************************************************
 
+conditional operator ?:
+which combines three expressions into a single expression
+
 ## Array and property access
 
- // JavaScript also supports arrays (numerically indexed lists) of values:
+// JavaScript also supports arrays (numerically indexed lists) of values:
 
- ```js
- let primes = [2, 3, 5, 7]; // An array of 4 values, delimited with [ and ].
- primes[0]                  
+```js
+let primes = [2, 3, 5, 7]; // An array of 4 values, delimited with [ and ].
+primes[0]                  
 // => 2: the first element (index 0) of the array.
- primes.length
+primes.length
 primes[primes.length-1]
 primes[4] = 9;
 primes[4] = 11;
 let empty = [];
 empty.length
 // => 4: how many elements in the array.
- // => 7: the last element of the array.
- // Add a new element by assignment.
- // Or alter an existing element by assignment.
- // [] is an empty array with no elements.
- // => 0
- ```
+// => 7: the last element of the array.
+// Add a new element by assignment.
+// Or alter an existing element by assignment.
+// [] is an empty array with no elements.
+// => 0
+```
 
 array of objects
 
 ```js
 let points = [
 // An array with 2 elements.
- {x: 0, y: 0},
+{x: 0, y: 0},
 {x: 1, y: 1}
 ]
 ```
@@ -57,10 +132,10 @@ let points = [
 
 *******************************************************************************************************
 An expression is a phrase of
- JavaScript that can be evaluated to produce a value. For example, the use of . and []
- to refer to the value of an object property or array element is an expression.
+JavaScript that can be evaluated to produce a value. For example, the use of . and []
+to refer to the value of an object property or array element is an expression.
 
- ########################################################################################################
+########################################################################################################
 
 Javascript Types
 *******************************************************************************************************
@@ -258,7 +333,7 @@ s.slice(-3)         // => "rld": last 3 characters
 s.split(", ")       // => ["Hello", "world"]: split at delimiter string
 
 // Searching a string
- s.indexOf("l")         // => 2: position of first letter l      
+s.indexOf("l")         // => 2: position of first letter l      
 s.indexOf("l", 3)       // => 3: position of first "l" at or after 3 kind of mean start from index 3
 s.indexOf("zz")         // => -1: s does not include the substring "zz"
 s.lastIndexOf("l")      // => 10: position of last letter l
@@ -303,3 +378,271 @@ s.concat("!")     // => "Hello, world!": just use + operator instead
 
 
 ```
+
+########################################################################################################
+
+Template Literals
+
+*******************************************************************************************************
+
+```js
+let name = "Bill";
+let greeting = `Hello ${ name }.`;  // greeting == "Hello Bill."
+
+`\n`.length           // => 1: the string has a single newline character
+String.raw`\n`.length  // => 2: a backslash character and the letter n
+/*
+Note that even though the tag portion of a tagged template literal is a function, there
+are no parentheses used in its invocation. In this very specific case, the backtick char
+acters replace the open and close parentheses.
+*/
+```
+
+########################################################################################################
+
+Pattern Matching
+
+*******************************************************************************************************
+
+```js
+
+/^HTML/;         // Match the letters H T M L at the start of a string
+/[1-9][0-9]*/;   // Match a nonzero digit, followed by any # of digits
+/\bjavascript\b/i;   // Match "javascript" as a word, case-insensitive  
+// at the begening \b means begins with javascript e.g javascriptsjfhdus
+// at the end means \b means ends with javascript so e.g ksjhsjavascript  will so point to find
+
+let text = "testing: 1, 2, 3";   // Sample text
+let pattern = /\d+/g;            // Matches all instances of one or more digits
+pattern.test(text)               // => true: a match exists
+text.search(pattern)             // => 9: position of first match
+text.match(pattern)              // => ["1", "2", "3"]: array of all matches
+text.replace(pattern, "#")      // => "testing: #, #, #" 
+text.split(/\D+/)               // => ["","1","2","3"]: split on nondigits  .... this returns array of digits, removing the nondigits
+text.split(/\d+/)               // => ["","1","2","3"]: split on digits  .... this returns array of nondigits, removing the digits
+3.4 Boolean Values
+
+```
+
+########################################################################################################
+
+Falsy Values
+
+*******************************************************************************************************
+
+```js
+undefined
+null
+0-0
+NaN
+""  // the empty string
+
+```
+
+########################################################################################################
+
+ES2020 finally defines globalThis as the standard way to refer to the global object in
+any context. As of early 2020, this feature has been implemented by all modern
+browsers and by Node.
+
+*******************************************************************************************************
+Copying from reference types
+
+```js
+let a = ["a","b","c"];              
+let b = [];                         
+// An array we want to copy
+// A distinct array we'll copy into
+for(let i = 0; i < a.length; i++) { // For each index of a[]
+b[i] = a[i];                    
+// Copy an element of a into b
+}
+let c = Array.from(b);              
+// In ES6, copy arrays with Array.from()
+```
+
+########################################################################################################
+
+*******************************************************************************************************
+Destructuring Assignment
+
+```js
+let [x,y] = [1,2];  // Same as let x=1, y=2
+[x,y] = [x+1,y+1];  // Same as x = x + 1, y = y + 1
+[x,y] = [y,x];      // Swap the value of the two variables
+[x,y]               // => [3,2]: the incremented and swapped values
+
+//Object.entries() returns an array of arrays, where each inner array represents a key/value pair for one property of the object.
+let o = { x: 1, y: 2 }; // The object we'll loop over
+for(const [name, value] of Object.entries(o)) {
+console.log(name, value); // Prints "x 1" and "y 2"
+}
+
+// get only keys
+let keys = ""
+let o = { x: 1, y: 2, z: 3 };
+for(let k of Object.keys(o)) {
+    keys += k;
+}
+keys  // => "xyz"
+
+// for values only
+let sum = 0;
+for(let v of Object.values(o)) {
+    sum += v;
+}
+sum // => 6
+
+
+/*The number of variables on the left of a destructuring assignment does not have to
+match the number of array elements on the right. Extra variables on the left are set to
+undefined, and extra values on the right are ignored. The list of variables on the left
+can include extra commas to skip certain values on the right:*/
+let [x,y] = [1];     // x == 1; y == undefined
+[x,y] = [1,2,3];    // x == 1; y == 2   
+
+[,x,,y] = [1,2,3,4]; // x == 2; y == 4
+
+/*If you want to collect all unused or remaining values into a single variable when
+destructuring an array, use three dots (...) before the last variable name on the lefthand side:*/
+let [x, ...y] = [1,2,3,4];  // y == [2,3,4]
+
+/*A powerful feature of array destructuring is that it does not actually require an array!
+You can use any iterable object (Chapter 12) on the righthand side of the assignment;
+any object that can be used with a for/of loop (§5.4.4) can also be destructured:*/
+let [first, ...rest] = "Hello"; // first == "H"; rest == ["e","l","l","o"]
+
+/*Destructuring assignment can also be performed when the righthand side is an object
+value. In this case, the lefthand side of the assignment looks something like an object
+literal: a comma-separated list of variable names within curly braces:*/
+
+let transparent = {r: 0.0, g: 0.0, b: 0.0, a: 1.0}; // A RGBA color
+let {r, g, b} = transparent;  // r == 0.0; g == 0.0; b == 0.0
+
+// Same as const cosine = Math.cos, tangent = Math.tan;
+const { cos: cosine, tan: tangent } = Math;
+
+
+/*Destructuring assignment becomes even more complicated when it is used with nes
+ted objects, or arrays of objects, or objects of arrays, but it is legal:*/
+let points = [{x: 1, y: 2}, {x: 3, y: 4}];     
+// An array of two point objects
+let [{x: x1, y: y1}, {x: x2, y: y2}] = points; // destructured into 4 variables.
+(x1 === 1 && y1 === 2 && x2 === 3 && y2 === 4) // => true
+
+
+/*Or, instead of destructuring an array of objects, we could destructure an object of arrays:*/
+let points = { p1: [1,2], p2: [3,4] };         
+// An object with 2 array props
+let { p1: [x1, y1], p2: [x2, y2] } = points;   // destructured into 4 vars
+(x1 === 1 && y1 === 2 && x2 === 3 && y2 === 4) // => true
+```
+
+########################################################################################################
+
+*******************************************************************************************************
+
+## conditioner statement
+
+```js
+switch(n) {
+    case 1:                  // Start here if n === 1 
+            // Execute code block #1.             
+        break;         // Stop here            
+    case 2:     // Start here if n === 2
+            // Execute code block #2.              
+        break;// Stop here                 
+    case 3:         // Start here if n === 3
+            // Execute code block #3.                      
+        break;// Stop here                 
+    default:    // If all else fails..
+            // Execute code block #4.                     
+        break;  // Stop here                   
+}
+
+//IF STATEMENT
+ if (n === 1) {
+    // Execute code block #1
+ } else if (n === 2) {
+    // Execute code block #2
+ } else if (n === 3) {
+    // Execute code block #3
+ } else {
+    // If all else fails, execute block #4
+ }
+
+let count = 0;
+while(count < 10) {
+    console.log(count);
+    count++;
+}
+
+ do {
+    console.log(a[i]);
+ } while(++i < a.length);
+
+
+  for(initialize ; test ; increment)
+    statement
+//or
+for(initialize ; test ; increment) {
+    statements
+    statements
+}
+
+// For of
+let data = [1, 2, 3, 4, 5, 6, 7, 8, 9], sum = 0;
+for(let element of data) {
+    sum += element;
+}
+console.log(sum)       // => 45
+
+//this is same as writing
+for(i=0; i<data.length; i++) {
+    sum += data[i]
+}
+
+```
+
+## for/of with strings
+
+```js
+//Strings are iterable character-by-character in ES6:
+    let frequency = {};
+for(let letter of "mississippi") {
+    if (frequency[letter]) {
+        frequency[letter]++;
+    } else {
+        frequency[letter] = 1;
+    }
+}
+//and this is same as the above using map
+const mymap = new Map();  // look into weakmap fir objects because if we have reference type in map it will never be garbage collected
+for(let l of "mississippi") {
+    mymap.set(l, (mymap.get(l) ?? 0) +1)
+
+}
+console.log(mymap)
+
+## set
+ let text = "Na na na na na na na na Batman!";
+ let wordSet = new Set(text.split(" "));
+ let unique = [];
+ for(let word of wordSet) {
+    unique.push(word);
+ }
+
+ //we can also use spread instead of for loop
+  let text = "Na na na na na na na na Batman!";
+ let wordSet = new Set(text.split(" "));
+ let unique = [...wordSet];
+
+
+```
+
+## Testing Properties
+
+to check whether an object has a property
+with a given name.
+You can do this with the in operator, with the hasOwnProperty()
+and propertyIsEnumerable() methods, or simply by querying the property
