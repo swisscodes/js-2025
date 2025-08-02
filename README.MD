@@ -642,7 +642,242 @@ console.log(mymap)
 
 ## Testing Properties
 
-to check whether an object has a property
-with a given name.
+to check whether an object has a property with a given name.
 You can do this with the in operator, with the hasOwnProperty()
 and propertyIsEnumerable() methods, or simply by querying the property
+
+```js
+let o = { x: 1 };
+"x" in o         // => true: o has an own property "x"
+"y" in o         // => false: o doesn't have a property "y"
+"toString" in o  // => true: o inherits a toString property
+
+let o = { x: 1 };
+o.hasOwnProperty("x")   // => true: o has an own property x     
+o.hasOwnProperty("y")     // => false: o doesn't have a property y   
+o.hasOwnProperty("toString") // => false: toString is an inherited property
+
+
+let o = { x: 1 };
+o.propertyIsEnumerable("x")  // => true: o has an own enumerable property x
+o.propertyIsEnumerable("toString")  // => false: not an own property
+Object.prototype.propertyIsEnumerable("toString") // => false: not enumerable
+
+/*There is one thing the in operator can do that the simple property access technique
+shown here cannot do. in can distinguish between properties that do not exist and
+properties that exist but have been set to undefined. Consider this code:*/
+
+let o = { x: undefined };  // Property is explicitly set to undefined
+o.x !== undefined          // => false: property exists but is undefined
+o.y !== undefined          // => false: property doesn't even exist
+"x" in o                   // => true: the property exists
+"y" in o                   // => false: the property doesn't exist
+delete o.x;                // Delete the property x
+"x" in o                   // => false: it doesn't exist anymore
+
+
+/* To guard against enumerating inherited properties with for/in, you can add an
+explicit check inside the loop body: */
+for(let p in o) {
+    if (!o.hasOwnProperty(p)) continue;    // Skip inherited properties   
+}
+
+for(let p in o) {
+    if (typeof o[p] === "function") continue; // Skip all methods
+}
+
+/*
+As an alternative to using a for/in loop, it is often easier to get an array of property
+names for an object and then loop through that array with a for/of loop. There are
+four functions you can use to get an array of property names:
+• Object.keys() returns an array of the names of the enumerable own properties
+of an object. It does not include non-enumerable properties, inherited properties,
+or properties whose name is a Symbol (see §6.10.3).
+• Object.getOwnPropertyNames() works like Object.keys() but returns an array
+of the names of non-enumerable own properties as well, as long as their names
+are strings.
+• Object.getOwnPropertySymbols() returns own properties whose names are
+Symbols, whether or not they are enumerable.
+• Reflect.ownKeys() returns all own property names, both enumerable and non
+enumerable, and both string and Symbol.
+*/
+
+## copying object
+/*
+Object.assign() expects two or more objects as its arguments. It modifies and
+returns the first argument, which is the target object, but does not alter the second or
+any subsequent arguments, which are the source objects
+*/
+
+/*Instead, what you can do is to create a new object, copy the defaults into it, and then
+override those defaults with the properties in o:*/
+
+o = Object.assign({}, defaults, o);
+```
+
+## 6.8 Serializing Objects
+
+```js
+ let o = {x: 1, y: {z: [false, null, ""]}}; // Define a test object
+ let s = JSON.stringify(o);   // s == '{"x":1,"y":{"z":[false,null,""]}}'
+ let p = JSON.parse(s);       // p == {x: 1, y: {z: [false, null, ""]}}
+ ```
+
+## Computed Property Names
+
+ ```js
+const PROPERTY_NAME = "p1";
+function computePropertyName() { return "p" + 2; }
+let o = {};
+o[PROPERTY_NAME] = 1;
+o[computePropertyName()] = 2;
+```
+
+### es6 you can use
+
+```js
+const PROPERTY_NAME = "p1";
+function computePropertyName() { return "p" + 2; }
+let p = {
+[PROPERTY_NAME]: 1,
+[computePropertyName()]: 2
+};
+p.p1 + p.p2 // => 3
+```
+
+## Spread Operator
+
+```JS
+ let position = { x: 0, y: 0 };
+ let dimensions = { width: 100, height: 75 };
+ let rect = { ...position, ...dimensions };
+ rect.x + rect.y + rect.width + rect.height // => 175
+
+/*
+If the object that is spread and the object it is being spread into both have a property
+with the same name, then the value of that property will be the one that comes last:
+*/
+ let o = { x: 1 };
+ let p = { x: 0, ...o };
+ p.x   // => 1: the value from object o overrides the initial value
+ let q = { ...o, x: 2 };
+ q.x   // => 2: the value 2 overrides the previous value from o.
+ 
+ let j = {h:1, y:2, o:5}
+ let u = {k:1, y:6, t:5}
+ let c = {...j, ...u} // result will be {h:1, y:6, o:5, t:5}  the last object property values overides
+
+```
+
+## Shorthand Methods
+
+```js
+// Prior to ES6,
+let square = {
+    area: function() { return this.side * this.side; },
+    side: 10
+};
+square.area() // => 100
+
+// with es6
+let square = {
+    area() { return this.side * this.side; },
+    side: 10
+};
+square.area() // => 100
+```
+
+## Arrays
+
+Array literals   []
+• The ... spread operator on an iterable object [...identifier]
+• The Array() constructor
+• The Array.of() and Array.from() factory methods
+
+### array literals
+
+```js
+let empty = [];                 // An array with no elements
+let primes = [2, 3, 5, 7, 11];  // An array with 5 numeric elements
+let misc = [ 1.1, true, "a", ]; // 3 elements of various types + trailing comma
+
+/*The values in an array literal need not be constants; they may be arbitrary
+expressions: */
+let base = 1024;
+let table = [base, base+1, base+2, base+3];
+
+
+//Array literals can contain object literals or other array literals:
+let b = [[1, {x: 1, y: 2}], [2, {x: 3, y: 4}]];
+
+//sparse array not to forget is just a normal js array with empty or undefined elements betwen indexes e.g
+
+let ar = [,,,]  //empty array with length of 3 filled with undefined items
+let ar1 = [,,,,5] // array with 1 item but length of 5
+let ar1 = [1,,,5] // array with 2 items but length of 5
+```
+
+## The Spread Operator
+
+```js
+/*
+In ES6 and later, you can use the “spread operator,” ..., to include the elements of
+one array within an array literal:
+*/
+let a = [1, 2, 3];
+let b = [0, ...a, 4];  // b == [0, 1, 2, 3, 4]
+
+//The spread operator is a convenient way to create a (shallow) copy of an array:
+let original = [1,2,3];
+let copy = [...original];
+copy[0] = 0;  // Modifying the copy does not change the original
+original[0]   // => 1
+
+/*Set objects (§11.1.1) are iterable, so an easy way to remove duplicate elements from
+an array is to convert the array to a set and then immediately convert the set back to
+an array using the spread operator:*/
+let letters = [..."hello world"];
+[...new Set(letters)]  // => ["h","e","l","o"," ","w","r","d"]
+
+```
+
+## The Array() Constructor
+
+```js
+/*
+Another way to create an array is with the Array() constructor. You can invoke this
+constructor in three distinct ways:
+• Call it with no arguments:
+*/
+let a = new Array();
+//This method creates an empty array with no elements and is equivalent to the array literal [].
+
+//Call it with a single numeric argument, which specifies a length:
+let a = new Array(10); //This technique creates an array with the specified length
+
+/* Explicitly specify two or more array elements or a single non-numeric element for the array: */
+let a = new Array(5, 4, 3, 2, 1, "testing, testing");
+
+```
+
+## Array.of()
+
+```js
+/**
+ When the Array() constructor function is invoked with one numeric argument, it
+uses that argument as an array length. But when invoked with more than one
+numeric argument, it treats those arguments as elements for the array to be created.
+This means that the Array() constructor cannot be used to create an array with a sin
+gle numeric element
+
+ In ES6, the Array.of() function addresses this problem: it is a factory method that
+ creates and returns a new array, using its argument values (regardless of how many of
+ them there are) as the array elements:
+*/
+
+Array.of()        // => []; returns empty array with no arguments
+Array.of(10)      // => [10]; can create arrays with a single numeric argument
+Array.of(1,2,3)   // => [1, 2, 3]
+```
+
+## Array.from()
