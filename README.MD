@@ -1,5 +1,4 @@
 # Javascript The Definative Guide 7th Edition
-# Javascript The Definative Guide 7th Edition
 
 *******************************************************************************************************
 
@@ -79,6 +78,7 @@ like this:
 ```js
 let max = maxWidth || preferences.maxWidth || 500;
 ```
+
 book.contents?.ch01?.sect1 // => undefined: book.contents has no ch01 property
 
 optional chaining
@@ -123,36 +123,6 @@ let max = maxWidth || preferences.maxWidth || 500; // not used mostly anymore th
  }
 ```
 
-## The Conditional Operator (?:) sometimes actually called the ternary operator
-
-x > 0 ? x : -x     // The absolute value of x
-greeting = "hello " + (username ? username : "there");
-
-## First-Defined (??)
-
-The first-defined operator ?? evaluates to its first defined operand: if its left operand
-is not null and not undefined, it returns that value. Otherwise, it returns the value of
-the right operand. Like the && and || operators, ?? is short-circuiting: it only evalu
-ates its second operand if the first operand evaluates to null or undefined. If the
-expression a has no side effects, then the expression a ?? b is equivalent to:
-
-```js
-(a !== null && a !== undefined) ? a : b
-```
-
-## the “nullish coalescing” operator
-
-?? is a useful alternative to || (§4.10.2) when you want to select the first defined
-operand rather than the first truthy operand. Although || is nominally a logical OR
-operator, it is also used idiomatically to select the first non-falsy operand with code
-like this:
-// If maxWidth is truthy, use that. Otherwise, look for a value in
-// the preferences object. If that is not truthy, use a hardcoded constant.
-
-```js
-let max = maxWidth || preferences.maxWidth || 500;
-```
-
 // Access the properties of an object with . or []:
 book.topic
 // Access the properties of an object with . or []:
@@ -184,6 +154,8 @@ which combines three expressions into a single expression
 ```js
 let primes = [2, 3, 5, 7]; // An array of 4 values, delimited with [ and ].
 primes[0]                  
+```
+
 ```js
 let primes = [2, 3, 5, 7]; // An array of 4 values, delimited with [ and ].
 primes[0]                  
@@ -201,13 +173,14 @@ empty.length
 // Or alter an existing element by assignment.
 // [] is an empty array with no elements.
 // => 0
+
 ```
+
 // => 7: the last element of the array.
 // Add a new element by assignment.
 // Or alter an existing element by assignment.
 // [] is an empty array with no elements.
 // => 0
-```
 
 array of objects
 
@@ -1037,6 +1010,7 @@ a.find(x => x % 7 === 0)   // => undefined: no multiples of 7 in the array
 ```
 
 ## every() and some()
+
 ```js
 /*
 The every() and some() methods are array predicates: they apply a predicate function you 
