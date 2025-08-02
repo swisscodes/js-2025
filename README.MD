@@ -1,4 +1,5 @@
 # Javascript The Definative Guide 7th Edition
+# Javascript The Definative Guide 7th Edition
 
 *******************************************************************************************************
 
@@ -78,11 +79,89 @@ like this:
 ```js
 let max = maxWidth || preferences.maxWidth || 500;
 ```
+book.contents?.ch01?.sect1 // => undefined: book.contents has no ch01 property
 
+optional chaining
+let a = { b: null };
+a.b?.c.d   // => undefined
+
+property access with ?. is “short-circuiting”: if the subexpression to
+the left of ?. evaluates to null or undefined, then the entire expression immediately
+evaluates to undefined without any further property access attempts.
+
+Of course, if a.b is an object, and if that object has no property named c, then
+a.b?.c.d will again throw a TypeError, and we will want to use another conditional
+property access:
+let a = { b: {} };
+a.b?.c?.d  // => undefined
+
+all this also applies to array
+a?.[index++]
+
+also used to call functions
+
+this is another form of short-circuiting
+
+```js
+let o = {x: 1};
+let p = null;
+o && o.x // => 1: o is truthy, so return value of o.x
+p && p.x     // => null: p is falsy, so return it and don't evaluate p.x
+
+
+// If maxWidth is truthy, use that. Otherwise, look for a value in
+// the preferences object. If that is not truthy, use a hardcoded constant.
+let max = maxWidth || preferences.maxWidth || 500; // not used mostly anymore there is alternative which is ??
+
+
+```
+
+```js
+ function square(x, log) { // The second argument is an optional function
+ log?.(x);            // Call the function if there is one
+ return x * x;         // Return the square of the argument
+ }
+```
+
+## The Conditional Operator (?:) sometimes actually called the ternary operator
+
+x > 0 ? x : -x     // The absolute value of x
+greeting = "hello " + (username ? username : "there");
+
+## First-Defined (??)
+
+The first-defined operator ?? evaluates to its first defined operand: if its left operand
+is not null and not undefined, it returns that value. Otherwise, it returns the value of
+the right operand. Like the && and || operators, ?? is short-circuiting: it only evalu
+ates its second operand if the first operand evaluates to null or undefined. If the
+expression a has no side effects, then the expression a ?? b is equivalent to:
+
+```js
+(a !== null && a !== undefined) ? a : b
+```
+
+## the “nullish coalescing” operator
+
+?? is a useful alternative to || (§4.10.2) when you want to select the first defined
+operand rather than the first truthy operand. Although || is nominally a logical OR
+operator, it is also used idiomatically to select the first non-falsy operand with code
+like this:
+// If maxWidth is truthy, use that. Otherwise, look for a value in
+// the preferences object. If that is not truthy, use a hardcoded constant.
+
+```js
+let max = maxWidth || preferences.maxWidth || 500;
+```
+
+// Access the properties of an object with . or []:
+book.topic
 // Access the properties of an object with . or []:
 book.topic
 book["edition"]
 // => "JavaScript"
+// => 7: another way to access property values.
+book.author = "Flanagan";  // Create new properties by assignment.
+book.contents = {};
 // => 7: another way to access property values.
 book.author = "Flanagan";  // Create new properties by assignment.
 book.contents = {};
@@ -94,14 +173,22 @@ book.contents = {};
 conditional operator ?:
 which combines three expressions into a single expression
 
+conditional operator ?:
+which combines three expressions into a single expression
+
 ## Array and property access
 
+// JavaScript also supports arrays (numerically indexed lists) of values:
 // JavaScript also supports arrays (numerically indexed lists) of values:
 
 ```js
 let primes = [2, 3, 5, 7]; // An array of 4 values, delimited with [ and ].
 primes[0]                  
+```js
+let primes = [2, 3, 5, 7]; // An array of 4 values, delimited with [ and ].
+primes[0]                  
 // => 2: the first element (index 0) of the array.
+primes.length
 primes.length
 primes[primes.length-1]
 primes[4] = 9;
@@ -115,12 +202,19 @@ empty.length
 // [] is an empty array with no elements.
 // => 0
 ```
+// => 7: the last element of the array.
+// Add a new element by assignment.
+// Or alter an existing element by assignment.
+// [] is an empty array with no elements.
+// => 0
+```
 
 array of objects
 
 ```js
 let points = [
 // An array with 2 elements.
+{x: 0, y: 0},
 {x: 0, y: 0},
 {x: 1, y: 1}
 ]
@@ -134,7 +228,10 @@ let points = [
 An expression is a phrase of
 JavaScript that can be evaluated to produce a value. For example, the use of . and []
 to refer to the value of an object property or array element is an expression.
+JavaScript that can be evaluated to produce a value. For example, the use of . and []
+to refer to the value of an object property or array element is an expression.
 
+########################################################################################################
 ########################################################################################################
 
 Javascript Types
@@ -333,6 +430,7 @@ s.slice(-3)         // => "rld": last 3 characters
 s.split(", ")       // => ["Hello", "world"]: split at delimiter string
 
 // Searching a string
+s.indexOf("l")         // => 2: position of first letter l      
 s.indexOf("l")         // => 2: position of first letter l      
 s.indexOf("l", 3)       // => 3: position of first "l" at or after 3 kind of mean start from index 3
 s.indexOf("zz")         // => -1: s does not include the substring "zz"
